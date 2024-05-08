@@ -1,0 +1,28 @@
+.animate {
+  animation-duration: 0.5s;
+  animation-name: animate-slide;
+  animation-delay: 0.1s;
+  animation-fill-mode: both;
+}
+
+.positioning {
+  padding: -20px;
+  margin: 0;
+}
+
+@keyframes animate-slide {
+  0% {
+    transform: translateY(-70%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@media only screen and (min-width: 700px) {
+  .animationed {
+    display: none;
+  }
+}
+
+/* <div className={`${styles.class1} ${styles.class2} ${styles.classN}`}> */
