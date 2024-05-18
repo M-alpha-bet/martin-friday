@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { TfiLineDouble } from "react-icons/tfi";
+import { IoIosMenu } from "react-icons/io";
 import { AiOutlineClose } from "react-icons/ai";
 import { MdOutlineEmail } from "react-icons/md";
 import { FaLinkedinIn, FaWhatsapp, FaXTwitter } from "react-icons/fa6";
@@ -74,7 +74,7 @@ const NavBar = () => {
               </Link>
             </ul>
             <div onClick={handleNav} className="md:hidden px-3">
-              <TfiLineDouble size={40} />
+              <IoIosMenu size={40} />
             </div>
           </div>
         </div>
@@ -101,8 +101,8 @@ const NavBar = () => {
                     priority={true}
                     src="/assets/logo.png"
                     alt="/"
-                    width={125}
-                    height={50}
+                    width={115}
+                    height={45}
                   />
                 </Link>
                 <div
