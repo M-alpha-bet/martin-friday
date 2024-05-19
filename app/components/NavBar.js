@@ -132,9 +132,9 @@ const NavBar = () => {
                 <Link href="/contact">
                   <li className="py-2 text-3xl">Contact</li>
                 </Link>
-                <Link href="/">
+                <a href="/Martin's-CV.pdf" download>
                   <li className="py-2 text-3xl">Read CV</li>
-                </Link>
+                </a>
               </ul>
               <div className="pt-10">
                 <p className="uppercase tracking-widest text-[#5651e5]">
