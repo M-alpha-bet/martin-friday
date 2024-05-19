@@ -67,11 +67,11 @@ const NavBar = () => {
                   Contact
                 </li>
               </Link>
-              <Link href="/">
+              <a href="/Martin's-CV.pdf" download>
                 <li className="ml-10 text-lg uppercase hover:border-b-4 hover:scale-125">
                   Read CV
                 </li>
-              </Link>
+              </a>
             </ul>
             <div onClick={handleNav} className="md:hidden px-3">
               <IoIosMenu size={40} />

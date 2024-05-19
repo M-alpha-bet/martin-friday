@@ -12,7 +12,7 @@ const Main = () => {
           <p className="uppercase text-xs md:text-sm tracking-widest text-gray-600 pt-10 animate-pulse">
             let's build something together
           </p>
-          <h1 className="pt-0 text-gray-700">
+          <h1 className="pt-0 text-gray-700 font-heading">
             Hi, I'm{" "}
             <span className="text-[#5651e5]">
               <Typewriter text="Friday Martin" />
@@ -20,8 +20,8 @@ const Main = () => {
           </h1>
           <h1 className="py-2 text-gray-700">A Full-Stack Developer</h1>
           <p className="pt-0 text-gray-500 max-w-[90%] md:max-w-[70%] m-auto">
-            I am a full stack web3 developer from Nigeria passionate about
-            building interactive digital experiences, the blockchain and it's
+            I am a full stack web3 developer passionate about building
+            interactive digital experiences, the blockchain and it's
             decentralization properties.
           </p>
           <div className="flex items-center justify-between max-w-[330px] m-auto py-4">
