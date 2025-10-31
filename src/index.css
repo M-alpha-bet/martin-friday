@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "amiga";
+  src: url("/fonts/SyneMono-Regular.ttf");
+}
+
+@font-face {
+  font-family: "spaceGrotesk";
+  src: url("/fonts/SpaceGrotesk-Regular.otf");
+}
+
+@theme {
+  --font-spectral: "amiga", sans-serif;
+  --font-spaceGrotesk: "spaceGrotesk", sans-serif;
+  --color-fogoRed: #ff4546;
+  --color-fogoBlack: #252825;
+  --color-fogoWhite: #fffcf9;
+  --color-blendBlue: #112958;
+  --color-color1: #112933;
+  --color-color2: #001c34;
+  --color-color3: #e5e7eb;
+  --color-color4: #e5e7eb;
+  --color-green9: #001c34;
+  --color-green6: #4caf50;
+}
+
+@layer utilities {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-spectral bg-fogoBlack text-white font-medium m-0;
+  }
+
+  p {
+    @apply md:text-[16px] text-[14px];
+  }
+
+  .metrics-text {
+    @apply md:text-[14px] text-[12px] font-medium;
+  }
+
+  .hero-heading {
+    @apply text-[140px] leading-[120px] font-semibold tracking-wide;
+  }
+
+  .warrior-text {
+    background: linear-gradient(
+      45deg,
+      #ff4546 0%,
+      #ffffff 25%,
+      #ff4546 30%,
+      #ffffff 45%,
+      #ff4546 60%,
+      #ffffff 75%,
+      #ff4546 90%,
+      #ffffff 100%
+    );
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: warrior-slash 3s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(255, 69, 70, 0.5);
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  @keyframes warrior-slash {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .heading-text {
+    @apply md:text-[20px] text-[16px] font-semibold;
+  }
+
+  .simple-slate-background {
+    @apply flex items-center bg-color1 text-white rounded-2xl;
+  }
+
+  .basic-border {
+    @apply border border-color2 rounded-[7px];
+  }
+
+  .button-container {
+    @apply flex pl-[10px] gap-2 h-[120px] items-center w-full rounded-2xl;
+  }
+
+  .metrics-input {
+    @apply w-[70%] h-full rounded-[10px] cursor-pointer;
+  }
+
+  .icon-container {
+    @apply h-full items-center justify-center flex w-[30%] rounded-[5px];
+  }
+
+  .metrics-container {
+    @apply py-[18px] w-full;
+  }
+
+  .header-nav-container {
+    @apply flex py-[10px] md:px-[28px] px-[20px]  text-color1 items-center justify-between z-10;
+  }
+
+  .menu-container {
+    @apply md:px-[20px] md:py-[20px] py-[18px] px-[15px] shadow-2xl bg-green9 shadow-gray-700 rounded-[13px] md:rounded-[25px] cursor-pointer;
+  }
+
+  .menu-text {
+    @apply text-fogoWhite font-semibold font-spectral text-[14px] md:text-[16px];
+  }
+
+  .carousel-image-holder {
+    @apply w-[220px] h-[220px] rotate-[10deg] rounded-3xl hover:z-20 transition-all duration-300;
+  }
+
+  .task-button {
+    @apply bg-fogoWhite text-fogoRed rounded-full px-[10px] py-[2px] cursor-pointer text-sm font-semibold;
+  }
+
+  /* Primary Button - Red background */
+  .btn-primary {
+    @apply rounded-full cursor-pointer bg-fogoRed text-white px-[20px] py-[6px] font-semibold transition-all duration-300 hover:bg-red-600 hover:scale-105 hover:shadow-lg active:scale-95;
+  }
+
+  /* Secondary Button - Red text with border */
+  .btn-secondary {
+    @apply text-fogoRed cursor-pointer border-b border-fogoRed pt-[5px] transition-all duration-300 hover:text-red-400 hover:border-red-400 hover:translate-x-1;
+  }
+
+  /* Task Button - White background with red text */
+  .btn-task {
+    @apply bg-fogoWhite text-fogoRed rounded-full px-[10px] py-[2px] cursor-pointer text-sm font-semibold transition-all duration-300 hover:bg-gray-100 hover:scale-105 hover:shadow-md active:scale-95;
+  }
+
+  /* Link Button - Underlined text with arrow */
+  .btn-link {
+    @apply text-fogoRed cursor-pointer border-b border-fogoRed transition-all duration-300 hover:text-red-400 hover:border-red-400 hover:translate-x-2;
+  }
+
+  /* Navigation Button - Subtle hover effect */
+  .btn-nav {
+    @apply hover:text-fogoRed transition-colors duration-300 cursor-pointer;
+  }
+
+  .roadmap-ribbon {
+    position: absolute;
+    top: 50%;
+    left: -100px;
+    width: calc(100% + 200px);
+    height: 8px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      #ff4546 20%,
+      #ffffff 40%,
+      #ff4546 60%,
+      #ffffff 80%,
+      #ff4546 100%
+    );
+    background-size: 200% 100%;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(255, 69, 70, 0.8), 0 0 40px rgba(255, 69, 70, 0.4),
+      0 0 60px rgba(255, 69, 70, 0.2);
+    animation: ribbon-flow 4s ease-in-out infinite,
+      ribbon-wiggle 2s ease-in-out infinite;
+    clip-path: polygon(
+      0% 50%,
+      20% 50%,
+      30% 10%,
+      40% 10%,
+      50% 50%,
+      60% 50%,
+      70% 90%,
+      80% 90%,
+      100% 50%,
+      100% 70%,
+      80% 100%,
+      70% 100%,
+      60% 70%,
+      50% 70%,
+      40% 30%,
+      30% 30%,
+      20% 70%,
+      0% 70%
+    );
+  }
+
+  @keyframes ribbon-flow {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes ribbon-wiggle {
+    0%,
+    100% {
+      transform: translateY(-50%) scaleY(1);
+    }
+    25% {
+      transform: translateY(-50%) scaleY(1.2);
+    }
+    50% {
+      transform: translateY(-50%) scaleY(0.8);
+    }
+    75% {
+      transform: translateY(-50%) scaleY(1.1);
+    }
+  }
+}
+
+.bg-gradient-shade {
+  background: #031a14;
+  background: linear-gradient(
+    189deg,
+    rgba(3, 26, 20, 1) 20%,
+    rgba(184, 82, 79, 1) 100%
+  );
+}
+
+.hero-bg {
+  background-image: radial-gradient(
+      circle at center,
+      rgba(255, 69, 70, 0.1) 0%,
+      rgba(17, 41, 88, 0.75) 80%
+    ),
+    url("/images/homeBackground.png");
+
+  background-blend-mode: multiply;
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+}
