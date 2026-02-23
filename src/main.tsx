@@ -14,8 +14,8 @@ createAppKit({
   adapters: [solanaWeb3JsAdapter],
   networks: [solana],
   metadata: {
-    name: "Orctra",
-    description: "Orctra trading from rebelOrcs",
+    name: "RebelOrcs",
+    description: "RebelOrcs",
     url: "https://options-trading-iota.vercel.app/",
     icons: ["https://avatars.githubusercontent.com/u/179229932"],
   },
