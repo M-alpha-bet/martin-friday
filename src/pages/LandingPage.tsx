@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { GoDash } from "react-icons/go";
-import { SkillsModal } from "../components/SkillsModal";
 import { CvModal } from "../components/CvModal";
 import { AboutMeModal } from "../components/AboutMe";
 import { ContactModal } from "../components/ContactModal";
@@ -114,11 +113,6 @@ export default function HomePage() {
           {cvIcon} <p className="font-semibold text-gray-900">CV</p>
         </div>
       </div>
-
-      <SkillsModal
-        isOpen={isSkillsModal}
-        onClose={() => setIsSkillsModal(false)}
-      />
 
       <CvModal isOpen={isCvModal} onClose={() => setIsCvModal(false)} />
 
