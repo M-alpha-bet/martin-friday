@@ -73,7 +73,7 @@ export const ProjectsModal = ({
       title: "Scan2order",
       image: "/images/projects/scan2order.png",
       description:
-        "Scan2Order is a B2B inventory, menu and ordering systems for restaurants, eliminating waiting times, reduce errors, and increase revenue.",
+        "Scan2Order is a B2B inventory, menu and ordering systems for restaurants, eliminating waiting times and reduce errors.",
       link: "https://scan2order.online",
     },
     {
