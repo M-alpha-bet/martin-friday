@@ -76,11 +76,7 @@ export default function HomePage() {
               I help businesses create websites and systems that automate their
               workflow.
             </p>
-            <p>
-              Click on the{" "}
-              <span className="font-semibold text-gray-900">skills icon</span>{" "}
-              to see my skill set
-            </p>
+
             <p>
               Click on the{" "}
               <span className="font-semibold text-gray-900">Projects icon</span>{" "}
@@ -88,8 +84,13 @@ export default function HomePage() {
             </p>
             <p>
               Click on the{" "}
-              <span className="font-semibold text-gray-900">contact me</span> to
+              <span className="font-semibold text-gray-900">Contact me</span> to
               reach out
+            </p>
+            <p>
+              Click on the{" "}
+              <span className="font-semibold text-gray-900">About icon</span> to
+              know more about me
             </p>
           </div>
         </motion.div>
