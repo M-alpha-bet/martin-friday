@@ -6,9 +6,16 @@ import { IoMailOutline } from "react-icons/io5";
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  zIndex?: number;
+  onFocus?: () => void;
 }
 
-export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
+export const ContactModal = ({
+  isOpen,
+  onClose,
+  zIndex,
+  onFocus,
+}: ContactModalProps) => {
   if (!isOpen) return null;
 
   const contactLinks = [
@@ -36,7 +43,10 @@ export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
   ];
 
   return (
-    <div className="fixed z-40 inset-0 flex items-center justify-center pointer-events-none">
+    <div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      style={{ zIndex }}
+    >
       <motion.div
         drag
         dragMomentum={false}
@@ -46,6 +56,7 @@ export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
         exit={{ opacity: 0, scale: 0.95 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
+        onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
         className="bg-gray-100 shadow-2xl w-[70vw] md:w-[400px] border-2 border-gray-900 p-[4px] flex flex-col pointer-events-auto"
       >

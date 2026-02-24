@@ -6,9 +6,16 @@ import { MdArrowOutward } from "react-icons/md";
 interface OffersModalProps {
   isOpen: boolean;
   onClose: () => void;
+  zIndex?: number;
+  onFocus?: () => void;
 }
 
-export const OffersModal = ({ isOpen, onClose }: OffersModalProps) => {
+export const OffersModal = ({
+  isOpen,
+  onClose,
+  zIndex,
+  onFocus,
+}: OffersModalProps) => {
   if (!isOpen) return null;
 
   const offers = [
@@ -52,7 +59,10 @@ export const OffersModal = ({ isOpen, onClose }: OffersModalProps) => {
   ];
 
   return (
-    <div className="fixed z-40 inset-0 flex items-center justify-center pointer-events-none">
+    <div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      style={{ zIndex }}
+    >
       <motion.div
         drag
         dragMomentum={false}
@@ -62,6 +72,7 @@ export const OffersModal = ({ isOpen, onClose }: OffersModalProps) => {
         exit={{ opacity: 0, scale: 0.95 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
+        onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
         className="bg-gray-100 shadow-2xl w-[95vw] md:w-[420px] border-2 border-gray-900 p-[4px] flex flex-col pointer-events-auto"
       >

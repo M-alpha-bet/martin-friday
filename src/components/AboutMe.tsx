@@ -1,12 +1,56 @@
-import { motion } from "motion/react";
+import { useRef, useState, useEffect } from "react";
+import { motion, useMotionValue, useAnimationFrame } from "motion/react";
 import { GoDash } from "react-icons/go";
 
 interface AboutMeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  zIndex?: number;
+  onFocus?: () => void;
 }
 
-export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
+export const AboutMeModal = ({
+  isOpen,
+  onClose,
+  zIndex,
+  onFocus,
+}: AboutMeModalProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [constraints, setConstraints] = useState({ left: 0, right: 0 });
+  const x = useMotionValue(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const resumeTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const { scrollWidth, offsetWidth } = containerRef.current;
+      setConstraints({ left: -(scrollWidth - offsetWidth), right: 0 });
+    }
+  }, [isOpen]);
+
+  useAnimationFrame(() => {
+    if (!isPaused && constraints.left !== 0) {
+      const currentX = x.get();
+      let newX = currentX - 1.0;
+      if (newX < constraints.left) {
+        newX = 1;
+      }
+      x.set(newX);
+    }
+  });
+
+  const handleInteractionStart = () => {
+    setIsPaused(true);
+    if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+  };
+
+  const handleInteractionEnd = () => {
+    if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+    resumeTimeout.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 1000);
+  };
+
   if (!isOpen) return null;
 
   const sections = [
@@ -48,7 +92,10 @@ export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
   ];
 
   return (
-    <div className="fixed z-40 inset-0 flex items-center justify-center pointer-events-none">
+    <div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      style={{ zIndex }}
+    >
       <motion.div
         drag
         dragMomentum={false}
@@ -58,6 +105,7 @@ export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
         exit={{ opacity: 0, scale: 0.95 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
+        onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
         className="bg-gray-100 shadow-2xl w-[90vw] md:w-[1000px] border-2 border-gray-900 p-[4px] h-[450px] flex flex-col pointer-events-auto"
       >
@@ -74,11 +122,23 @@ export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
           </div>
         </div>
 
-        {/* Horizontal Scroll Content */}
-        <div className="flex-1 overflow-x-auto no-scrollbar bg-white border-2 border-gray-600">
-          <div className="flex h-full min-w-max">
+        <div
+          ref={containerRef}
+          onMouseEnter={handleInteractionStart}
+          onMouseLeave={handleInteractionEnd}
+          className="flex-1 overflow-x-hidden no-scrollbar bg-white border-2 border-gray-600 cursor-cell"
+        >
+          <motion.div
+            drag="x"
+            dragConstraints={constraints}
+            dragElastic={0.1}
+            style={{ x }}
+            onDragStart={handleInteractionStart}
+            onDragEnd={handleInteractionEnd}
+            className="flex h-full min-w-max"
+          >
             {/* Introduction Card */}
-            <div className="w-[300px] p-4 flex flex-col justify-center border-r-2 border-gray-200 shrink-0">
+            <div className="w-[300px] p-4 flex flex-col justify-center border-r-2 border-gray-200 shrink-0 select-none">
               <h1 className="text-heading-medium font-pixtech mb-4">
                 Hello World
               </h1>
@@ -94,12 +154,13 @@ export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
             {sections.map((section, index) => (
               <div
                 key={index}
-                className="w-[350px] relative group overflow-hidden border-r-2 border-gray-200 shrink-0"
+                className="w-[350px] relative group overflow-hidden border-r-2 border-gray-200 shrink-0 select-none"
               >
                 <img
                   src={section.image}
                   alt={section.title}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  draggable={false}
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                   <h3 className="text-white font-pixtech text-lg mb-2">
@@ -113,7 +174,7 @@ export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
                           href="https://open.spotify.com/show/1gqvQ7h7BxNSVoQVTnwihr?si=b200165579744487"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="underline hover:text-blue-500 transition-colors cursor-pointer"
+                          className="underline hover:text-blue-500 transition-colors cursor-pointer pointer-events-auto"
                         >
                           'How to Take Over the World'
                         </a>{" "}
@@ -133,14 +194,14 @@ export const AboutMeModal = ({ isOpen, onClose }: AboutMeModalProps) => {
             ))}
 
             {/* Final Closing Card */}
-            <div className="w-[300px] p-8 flex flex-col justify-center bg-gray-900 text-white shrink-0">
+            <div className="w-[300px] p-8 flex flex-col justify-center bg-gray-900 text-white shrink-0 select-none">
               <h2 className="text-heading font-pixtech mb-4">Let's Connect.</h2>
               <p className="text-gray-300 text-sm mb-6">
                 Honestly, that’s how I approach both life and code. Beautifully
                 imperfect and intentionally meaningful.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Footer info */}

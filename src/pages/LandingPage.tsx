@@ -9,12 +9,40 @@ import { OffersModal } from "../components/OffersModal";
 
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [isSkillsModal, setIsSkillsModal] = useState(false);
+  // const [isSkillsModal, setIsSkillsModal] = useState(false);
   const [isCvModal, setIsCvModal] = useState(false);
   const [isAboutModal, setIsAboutModal] = useState(false);
   const [isContactModal, setIsContactModal] = useState(false);
   const [isProjectsModal, setIsProjectsModal] = useState(false);
   const [isOffersModal, setIsOffersModal] = useState(false);
+
+  const [zIndices, setZIndices] = useState({
+    cv: 40,
+    about: 40,
+    contact: 40,
+    projects: 40,
+    offers: 40,
+    welcome: 10,
+  });
+
+  const [maxZ, setMaxZ] = useState(50);
+
+  const bringToFront = (modalKey: keyof typeof zIndices) => {
+    const nextZ = maxZ + 1;
+    setMaxZ(nextZ);
+    setZIndices((prev) => ({ ...prev, [modalKey]: nextZ }));
+  };
+
+  const toggleModal = (
+    modalKey: keyof typeof zIndices,
+    setter: (val: boolean) => void,
+    currentVal: boolean,
+  ) => {
+    if (!currentVal) {
+      bringToFront(modalKey);
+    }
+    setter(!currentVal);
+  };
 
   return (
     <div>
@@ -26,7 +54,8 @@ export default function HomePage() {
           dragElastic={0}
           initial={{ x: 100, y: 20 }}
           whileDrag={{ cursor: "grabbing" }}
-          style={{ cursor: "grab" }}
+          style={{ cursor: "grab", zIndex: zIndices.welcome }}
+          onPointerDown={() => bringToFront("welcome")}
         >
           <div className="flex bg-gray-900 justify-between items-center mb-[4px] px-[10px] py-[4px]">
             <h2 className="text-body-medium font-semibold text-white">
@@ -67,7 +96,7 @@ export default function HomePage() {
       )}
 
       <div className="fixed bottom-8 left-0 right-0 flex justify-center gap-16">
-        <div className="flex flex-col items-center gap-2">
+        {/* <div className="flex flex-col items-center gap-2">
           <div
             onClick={() => setIsSkillsModal(!isSkillsModal)}
             className="cursor-pointer"
@@ -75,10 +104,12 @@ export default function HomePage() {
             {skillIcon}
           </div>
           <p className="font-semibold">Skills</p>
-        </div>
+        </div> */}
         <div className="flex flex-col items-center gap-2">
           <div
-            onClick={() => setIsProjectsModal(!isProjectsModal)}
+            onClick={() =>
+              toggleModal("projects", setIsProjectsModal, isProjectsModal)
+            }
             className="cursor-pointer transition-transform hover:scale-110"
           >
             {workIcon}
@@ -86,54 +117,69 @@ export default function HomePage() {
           <p className="font-semibold text-gray-900">Projects</p>
         </div>
         <div
-          onClick={() => setIsContactModal(!isContactModal)}
+          onClick={() =>
+            toggleModal("contact", setIsContactModal, isContactModal)
+          }
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
           {contactIcon} <p className="font-semibold text-gray-900">Contact</p>
         </div>
 
         <div
-          onClick={() => setIsAboutModal(!isAboutModal)}
+          onClick={() => toggleModal("about", setIsAboutModal, isAboutModal)}
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
           {aboutIcon} <p className="font-semibold text-gray-900">About</p>
         </div>
 
         <div
-          onClick={() => setIsOffersModal(!isOffersModal)}
+          onClick={() => toggleModal("offers", setIsOffersModal, isOffersModal)}
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
           {offersIcon} <p className="font-semibold text-gray-900">Offers</p>
         </div>
 
         <div
-          onClick={() => setIsCvModal(!isCvModal)}
+          onClick={() => toggleModal("cv", setIsCvModal, isCvModal)}
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
           {cvIcon} <p className="font-semibold text-gray-900">CV</p>
         </div>
       </div>
 
-      <CvModal isOpen={isCvModal} onClose={() => setIsCvModal(false)} />
+      <CvModal
+        isOpen={isCvModal}
+        onClose={() => setIsCvModal(false)}
+        zIndex={zIndices.cv}
+        onFocus={() => bringToFront("cv")}
+      />
 
       <AboutMeModal
         isOpen={isAboutModal}
         onClose={() => setIsAboutModal(false)}
+        zIndex={zIndices.about}
+        onFocus={() => bringToFront("about")}
       />
 
       <ContactModal
         isOpen={isContactModal}
         onClose={() => setIsContactModal(false)}
+        zIndex={zIndices.contact}
+        onFocus={() => bringToFront("contact")}
       />
 
       <ProjectsModal
         isOpen={isProjectsModal}
         onClose={() => setIsProjectsModal(false)}
+        zIndex={zIndices.projects}
+        onFocus={() => bringToFront("projects")}
       />
 
       <OffersModal
         isOpen={isOffersModal}
         onClose={() => setIsOffersModal(false)}
+        zIndex={zIndices.offers}
+        onFocus={() => bringToFront("offers")}
       />
     </div>
   );
@@ -141,96 +187,96 @@ export default function HomePage() {
 
 // Icons
 
-const skillIcon = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 32 32"
-    id="Money-Payments-Diamond--Streamline-Pixel"
-    height={38}
-    width={38}
-  >
-    <g>
-      <path d="M30.47 28.95H32v1.53h-1.53Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m30.47 1.52 -1.52 0 0 1.53 -1.52 0 0 1.52 1.52 0 0 1.53 1.52 0 0 -1.53 1.53 0 0 -1.52 -1.53 0 0 -1.53z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M28.95 22.86h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M27.43 24.38h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M27.43 21.33h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M27.43 15.24h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M27.43 9.14h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M25.9 22.86h1.53v1.52H25.9Z" fill="#000000" strokeWidth={1} />
-      <path d="M25.9 16.76h1.53v1.53H25.9Z" fill="#000000" strokeWidth={1} />
-      <path d="M25.9 7.62h1.53v1.52H25.9Z" fill="#000000" strokeWidth={1} />
-      <path d="M24.38 18.29h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M24.38 6.1h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m24.38 32 0 -1.52 1.52 0 0 -1.53 -1.52 0 0 -1.52 -1.53 0 0 1.52 -1.52 0 0 1.53 1.52 0 0 1.52 1.53 0z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M22.85 19.81h1.53v1.52h-1.53Z" fill="#000000" strokeWidth={1} />
-      <path d="M21.33 21.33h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M21.33 15.24h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M21.33 9.14h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M21.33 1.52h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M19.81 22.86h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M19.81 16.76h1.52v3.05h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M19.81 7.62h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M18.28 19.81h1.53v3.05h-1.53Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m18.28 22.86 -1.52 0 0 4.57 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M16.76 0h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M13.71 27.43h3.05v1.52h-3.05Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m13.71 22.86 -1.52 0 0 1.52 -1.53 0 0 1.53 1.53 0 0 1.52 1.52 0 0 -4.57z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M10.66 19.81h1.53v3.05h-1.53Z" fill="#000000" strokeWidth={1} />
-      <path d="M9.14 22.86h1.52v1.52H9.14Z" fill="#000000" strokeWidth={1} />
-      <path d="M9.14 16.76h1.52v3.05H9.14Z" fill="#000000" strokeWidth={1} />
-      <path d="M9.14 7.62h1.52v1.52H9.14Z" fill="#000000" strokeWidth={1} />
-      <path d="M9.14 1.52h1.52v1.53H9.14Z" fill="#000000" strokeWidth={1} />
-      <path d="M7.62 27.43h1.52v1.52H7.62Z" fill="#000000" strokeWidth={1} />
-      <path d="M7.62 21.33h1.52v1.53H7.62Z" fill="#000000" strokeWidth={1} />
-      <path d="M7.62 15.24h1.52v1.52H7.62Z" fill="#000000" strokeWidth={1} />
-      <path d="M7.62 9.14h1.52v1.53H7.62Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m10.66 6.1 0 1.52 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 -1.53 -18.29 0 0 1.53 4.57 0z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M6.09 19.81h1.53v1.52H6.09Z" fill="#000000" strokeWidth={1} />
-      <path d="M4.57 18.29h1.52v1.52H4.57Z" fill="#000000" strokeWidth={1} />
-      <path d="M4.57 6.1h1.52v1.52H4.57Z" fill="#000000" strokeWidth={1} />
-      <path d="M3.04 24.38h1.53v1.53H3.04Z" fill="#000000" strokeWidth={1} />
-      <path d="M3.04 16.76h1.53v1.53H3.04Z" fill="#000000" strokeWidth={1} />
-      <path d="M3.04 7.62h1.53v1.52H3.04Z" fill="#000000" strokeWidth={1} />
-      <path d="M1.52 30.48h1.52V32H1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M1.52 25.91h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M1.52 22.86h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
-      <path d="M1.52 15.24h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m1.52 13.71 4.57 0 0 1.53 1.53 0 0 -1.53 15.23 0 0 1.53 1.53 0 0 -1.53 4.57 0 0 1.53 1.52 0 0 -4.57 -1.52 0 0 1.52 -4.57 0 0 -1.52 -1.53 0 0 1.52 -15.23 0 0 -1.52 -1.53 0 0 1.52 -4.57 0 0 -1.52 -1.52 0 0 4.57 1.52 0 0 -1.53z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M1.52 9.14h1.52v1.53H1.52Z" fill="#000000" strokeWidth={1} />
-      <path
-        d="m1.52 4.57 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52 -1.52 0 0 1.52 -1.52 0 0 1.53 1.52 0 0 1.52z"
-        fill="#000000"
-        strokeWidth={1}
-      />
-      <path d="M0 24.38h1.52v1.53H0Z" fill="#000000" strokeWidth={1} />
-    </g>
-  </svg>
-);
+// const skillIcon = (
+//   <svg
+//     xmlns="http://www.w3.org/2000/svg"
+//     viewBox="0 0 32 32"
+//     id="Money-Payments-Diamond--Streamline-Pixel"
+//     height={38}
+//     width={38}
+//   >
+//     <g>
+//       <path d="M30.47 28.95H32v1.53h-1.53Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m30.47 1.52 -1.52 0 0 1.53 -1.52 0 0 1.52 1.52 0 0 1.53 1.52 0 0 -1.53 1.53 0 0 -1.52 -1.53 0 0 -1.53z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M28.95 22.86h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M27.43 24.38h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M27.43 21.33h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M27.43 15.24h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M27.43 9.14h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M25.9 22.86h1.53v1.52H25.9Z" fill="#000000" strokeWidth={1} />
+//       <path d="M25.9 16.76h1.53v1.53H25.9Z" fill="#000000" strokeWidth={1} />
+//       <path d="M25.9 7.62h1.53v1.52H25.9Z" fill="#000000" strokeWidth={1} />
+//       <path d="M24.38 18.29h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M24.38 6.1h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m24.38 32 0 -1.52 1.52 0 0 -1.53 -1.52 0 0 -1.52 -1.53 0 0 1.52 -1.52 0 0 1.53 1.52 0 0 1.52 1.53 0z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M22.85 19.81h1.53v1.52h-1.53Z" fill="#000000" strokeWidth={1} />
+//       <path d="M21.33 21.33h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M21.33 15.24h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M21.33 9.14h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M21.33 1.52h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M19.81 22.86h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M19.81 16.76h1.52v3.05h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M19.81 7.62h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M18.28 19.81h1.53v3.05h-1.53Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m18.28 22.86 -1.52 0 0 4.57 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M16.76 0h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M13.71 27.43h3.05v1.52h-3.05Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m13.71 22.86 -1.52 0 0 1.52 -1.53 0 0 1.53 1.53 0 0 1.52 1.52 0 0 -4.57z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M10.66 19.81h1.53v3.05h-1.53Z" fill="#000000" strokeWidth={1} />
+//       <path d="M9.14 22.86h1.52v1.52H9.14Z" fill="#000000" strokeWidth={1} />
+//       <path d="M9.14 16.76h1.52v3.05H9.14Z" fill="#000000" strokeWidth={1} />
+//       <path d="M9.14 7.62h1.52v1.52H9.14Z" fill="#000000" strokeWidth={1} />
+//       <path d="M9.14 1.52h1.52v1.53H9.14Z" fill="#000000" strokeWidth={1} />
+//       <path d="M7.62 27.43h1.52v1.52H7.62Z" fill="#000000" strokeWidth={1} />
+//       <path d="M7.62 21.33h1.52v1.53H7.62Z" fill="#000000" strokeWidth={1} />
+//       <path d="M7.62 15.24h1.52v1.52H7.62Z" fill="#000000" strokeWidth={1} />
+//       <path d="M7.62 9.14h1.52v1.53H7.62Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m10.66 6.1 0 1.52 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 -1.53 -18.29 0 0 1.53 4.57 0z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M6.09 19.81h1.53v1.52H6.09Z" fill="#000000" strokeWidth={1} />
+//       <path d="M4.57 18.29h1.52v1.52H4.57Z" fill="#000000" strokeWidth={1} />
+//       <path d="M4.57 6.1h1.52v1.52H4.57Z" fill="#000000" strokeWidth={1} />
+//       <path d="M3.04 24.38h1.53v1.53H3.04Z" fill="#000000" strokeWidth={1} />
+//       <path d="M3.04 16.76h1.53v1.53H3.04Z" fill="#000000" strokeWidth={1} />
+//       <path d="M3.04 7.62h1.53v1.52H3.04Z" fill="#000000" strokeWidth={1} />
+//       <path d="M1.52 30.48h1.52V32H1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M1.52 25.91h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M1.52 22.86h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
+//       <path d="M1.52 15.24h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m1.52 13.71 4.57 0 0 1.53 1.53 0 0 -1.53 15.23 0 0 1.53 1.53 0 0 -1.53 4.57 0 0 1.53 1.52 0 0 -4.57 -1.52 0 0 1.52 -4.57 0 0 -1.52 -1.53 0 0 1.52 -15.23 0 0 -1.52 -1.53 0 0 1.52 -4.57 0 0 -1.52 -1.52 0 0 4.57 1.52 0 0 -1.53z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M1.52 9.14h1.52v1.53H1.52Z" fill="#000000" strokeWidth={1} />
+//       <path
+//         d="m1.52 4.57 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52 -1.52 0 0 1.52 -1.52 0 0 1.53 1.52 0 0 1.52z"
+//         fill="#000000"
+//         strokeWidth={1}
+//       />
+//       <path d="M0 24.38h1.52v1.53H0Z" fill="#000000" strokeWidth={1} />
+//     </g>
+//   </svg>
+// );
 
 const workIcon = (
   <svg

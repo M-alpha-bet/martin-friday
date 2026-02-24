@@ -5,13 +5,18 @@ import { MdOutlineFileDownload } from "react-icons/md";
 interface CvModalProps {
   isOpen: boolean;
   onClose: () => void;
+  zIndex?: number;
+  onFocus?: () => void;
 }
 
-export const CvModal = ({ isOpen, onClose }: CvModalProps) => {
+export const CvModal = ({ isOpen, onClose, zIndex, onFocus }: CvModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed z-40 inset-0 flex items-center justify-center pointer-events-none">
+    <div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      style={{ zIndex }}
+    >
       <motion.div
         drag
         dragMomentum={false}
@@ -21,6 +26,7 @@ export const CvModal = ({ isOpen, onClose }: CvModalProps) => {
         exit={{ opacity: 0, scale: 0.95 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
+        onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
         className="bg-gray-100 shadow-2xl w-[650px] max-w-[95vw] border-2 border-gray-900 p-[4px] h-[75vh] flex flex-col pointer-events-auto"
       >

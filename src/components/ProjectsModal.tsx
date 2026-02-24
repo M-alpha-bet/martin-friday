@@ -1,13 +1,57 @@
-import { motion } from "motion/react";
+import { motion, useMotionValue, useAnimationFrame } from "motion/react";
 import { GoDash } from "react-icons/go";
 import { MdArrowOutward } from "react-icons/md";
+import { useRef, useState, useEffect } from "react";
 
 interface ProjectsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  zIndex?: number;
+  onFocus?: () => void;
 }
 
-export const ProjectsModal = ({ isOpen, onClose }: ProjectsModalProps) => {
+export const ProjectsModal = ({
+  isOpen,
+  onClose,
+  zIndex,
+  onFocus,
+}: ProjectsModalProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [constraints, setConstraints] = useState({ left: 0, right: 0 });
+  const x = useMotionValue(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const resumeTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const { scrollWidth, offsetWidth } = containerRef.current;
+      setConstraints({ left: -(scrollWidth - offsetWidth), right: 0 });
+    }
+  }, [isOpen]);
+
+  useAnimationFrame(() => {
+    if (!isPaused && constraints.left !== 0) {
+      const currentX = x.get();
+      let newX = currentX - 1.0;
+      if (newX < constraints.left) {
+        newX = 0;
+      }
+      x.set(newX);
+    }
+  });
+
+  const handleInteractionStart = () => {
+    setIsPaused(true);
+    if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+  };
+
+  const handleInteractionEnd = () => {
+    if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+    resumeTimeout.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 1000);
+  };
+
   if (!isOpen) return null;
 
   const projects = [
@@ -37,12 +81,15 @@ export const ProjectsModal = ({ isOpen, onClose }: ProjectsModalProps) => {
       image: "/images/projects/tarslehbooks.png",
       description:
         "Tarsleh books is a personal book website for Mr Paul Tarsleh's books which are faith rooted christian books.",
-      link: "https://tarslehbooks.com", // Assumed link based on context, update if needed
+      link: "https://tarslehbooks.com",
     },
   ];
 
   return (
-    <div className="fixed z-40 inset-0 flex items-center justify-center pointer-events-none">
+    <div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none"
+      style={{ zIndex }}
+    >
       <motion.div
         drag
         dragMomentum={false}
@@ -52,6 +99,7 @@ export const ProjectsModal = ({ isOpen, onClose }: ProjectsModalProps) => {
         exit={{ scale: 0.9, opacity: 0 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
+        onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
         className="bg-gray-100 shadow-2xl w-[95vw] md:w-[900px] border-2 border-gray-900 p-[4px] h-auto flex flex-col pointer-events-auto"
       >
@@ -68,19 +116,32 @@ export const ProjectsModal = ({ isOpen, onClose }: ProjectsModalProps) => {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-x-auto no-scrollbar bg-white border-2 border-gray-600">
-          <div className="flex h-full min-w-max p-1 gap-4">
+        <div
+          ref={containerRef}
+          onMouseEnter={handleInteractionStart}
+          onMouseLeave={handleInteractionEnd}
+          className="flex-1 overflow-x-hidden no-scrollbar bg-white border-2 border-gray-600 cursor-cell"
+        >
+          <motion.div
+            drag="x"
+            dragConstraints={constraints}
+            dragElastic={0.1}
+            style={{ x }}
+            onDragStart={handleInteractionStart}
+            onDragEnd={handleInteractionEnd}
+            className="flex h-full min-w-max p-1 gap-4"
+          >
             {projects.map((project, index) => (
               <div
                 key={index}
-                className="w-[350px] flex flex-col border border-gray-200 bg-gray-50 hover:border-gray-900 transition-all shrink-0"
+                className="w-[350px] flex flex-col border border-gray-200 bg-gray-50 hover:border-gray-900 transition-all shrink-0 select-none"
               >
                 <div className="h-[250px] overflow-hidden border-b-2 border-gray-200">
                   <img
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover hover:grayscale-50 transition-all duration-500"
+                    draggable={false}
+                    className="w-full h-full object-cover hover:grayscale-50 transition-all duration-500 pointer-events-none"
                   />
                 </div>
                 <div className="px-3 pt-2 flex flex-col">
@@ -91,7 +152,7 @@ export const ProjectsModal = ({ isOpen, onClose }: ProjectsModalProps) => {
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm font-bold text-gray-900 hover:translate-x-1 transition-transform group"
+                    className="flex items-center gap-2 text-sm font-bold text-gray-900 hover:translate-x-1 transition-transform group pointer-events-auto"
                   >
                     Visit {project.title}
                     <MdArrowOutward className="group-hover:rotate-45 transition-transform" />
@@ -99,7 +160,7 @@ export const ProjectsModal = ({ isOpen, onClose }: ProjectsModalProps) => {
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Footer */}
