@@ -144,7 +144,7 @@ export const ProjectsModal = ({
                     className="w-full h-full object-cover hover:grayscale-50 transition-all duration-500 pointer-events-none"
                   />
                 </div>
-                <div className="px-3 pt-2 flex flex-col">
+                <div className="p-3 flex flex-col">
                   <p className="text-gray-600 text-sm mb-4">
                     {project.description}
                   </p>
