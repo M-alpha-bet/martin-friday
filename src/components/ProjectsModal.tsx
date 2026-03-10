@@ -8,6 +8,8 @@ interface ProjectsModalProps {
   onClose: () => void;
   zIndex?: number;
   onFocus?: () => void;
+  isMobile?: boolean;
+  initialY?: number;
 }
 
 export const ProjectsModal = ({
@@ -15,6 +17,8 @@ export const ProjectsModal = ({
   onClose,
   zIndex,
   onFocus,
+  isMobile,
+  initialY,
 }: ProjectsModalProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [constraints, setConstraints] = useState({ left: 0, right: 0 });
@@ -91,17 +95,22 @@ export const ProjectsModal = ({
       style={{ zIndex }}
     >
       <motion.div
-        drag
+        drag={isMobile ? "y" : true}
         dragMomentum={false}
         dragElastic={0}
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{
+          x: isMobile ? 0 : 0,
+          y: isMobile ? initialY : 0,
+          scale: 0.9,
+          opacity: 0,
+        }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
         onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
-        className="bg-gray-100 shadow-2xl w-[95vw] md:w-[900px] border-2 border-gray-900 p-[4px] h-auto flex flex-col pointer-events-auto"
+        className="bg-gray-100 shadow-2xl w-[94vw] md:w-[900px] border-2 border-gray-900 p-[4px] h-auto flex flex-col pointer-events-auto"
       >
         {/* Modal Header */}
         <div className="flex bg-gray-900 justify-between items-center mb-[4px] px-[12px] py-[6px] shrink-0">

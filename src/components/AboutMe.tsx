@@ -7,6 +7,8 @@ interface AboutMeModalProps {
   onClose: () => void;
   zIndex?: number;
   onFocus?: () => void;
+  isMobile?: boolean;
+  initialY?: number;
 }
 
 export const AboutMeModal = ({
@@ -14,6 +16,8 @@ export const AboutMeModal = ({
   onClose,
   zIndex,
   onFocus,
+  isMobile,
+  initialY,
 }: AboutMeModalProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [constraints, setConstraints] = useState({ left: 0, right: 0 });
@@ -97,17 +101,22 @@ export const AboutMeModal = ({
       style={{ zIndex }}
     >
       <motion.div
-        drag
+        drag={isMobile ? "y" : true}
         dragMomentum={false}
         dragElastic={0}
-        initial={{ x: -200, y: 50, opacity: 0, scale: 0.95 }}
+        initial={{
+          x: isMobile ? 0 : -200,
+          y: isMobile ? initialY : 50,
+          opacity: 0,
+          scale: 0.95,
+        }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
         onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
-        className="bg-gray-100 shadow-2xl w-[90vw] md:w-[1000px] border-2 border-gray-900 p-[4px] h-[450px] flex flex-col pointer-events-auto"
+        className="bg-gray-100 shadow-2xl w-[94vw] md:w-[1000px] border-2 border-gray-900 p-[4px] h-[450px] flex flex-col pointer-events-auto"
       >
         {/* Modal Header */}
         <div className="flex bg-gray-900 justify-between items-center mb-[4px] px-[12px] py-[6px] shrink-0">

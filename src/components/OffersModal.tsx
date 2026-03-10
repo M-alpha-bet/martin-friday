@@ -8,6 +8,8 @@ interface OffersModalProps {
   onClose: () => void;
   zIndex?: number;
   onFocus?: () => void;
+  isMobile?: boolean;
+  initialY?: number;
 }
 
 export const OffersModal = ({
@@ -15,6 +17,8 @@ export const OffersModal = ({
   onClose,
   zIndex,
   onFocus,
+  isMobile,
+  initialY,
 }: OffersModalProps) => {
   if (!isOpen) return null;
 
@@ -64,17 +68,22 @@ export const OffersModal = ({
       style={{ zIndex }}
     >
       <motion.div
-        drag
+        drag={isMobile ? "y" : true}
         dragMomentum={false}
         dragElastic={0}
-        initial={{ y: 50, opacity: 0, scale: 0.95 }}
+        initial={{
+          x: isMobile ? 0 : 0,
+          y: isMobile ? initialY : 50,
+          opacity: 0,
+          scale: 0.95,
+        }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         whileDrag={{ cursor: "grabbing" }}
         style={{ cursor: "grab" }}
         onPointerDown={onFocus}
         transition={{ duration: 0.2 }}
-        className="bg-gray-100 shadow-2xl w-[95vw] md:w-[420px] border-2 border-gray-900 p-[4px] flex flex-col pointer-events-auto"
+        className="bg-gray-100 shadow-2xl w-[94vw] md:w-[420px] max-h-[500px] border-2 border-gray-900 p-[4px] flex flex-col pointer-events-auto"
       >
         {/* Modal Header */}
         <div className="flex bg-gray-900 justify-between items-center mb-[4px] px-[12px] py-[6px] shrink-0">

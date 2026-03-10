@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { GoDash } from "react-icons/go";
 import { CvModal } from "../components/CvModal";
@@ -9,12 +9,19 @@ import { OffersModal } from "../components/OffersModal";
 
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(true);
-  // const [isSkillsModal, setIsSkillsModal] = useState(false);
   const [isCvModal, setIsCvModal] = useState(false);
   const [isAboutModal, setIsAboutModal] = useState(false);
   const [isContactModal, setIsContactModal] = useState(false);
   const [isProjectsModal, setIsProjectsModal] = useState(false);
   const [isOffersModal, setIsOffersModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const [zIndices, setZIndices] = useState({
     cv: 40,
@@ -47,65 +54,62 @@ export default function HomePage() {
   return (
     <div>
       {isModalOpen && (
-        <motion.div
-          className="fixed bg-gray-100 border border-gray-600 shadow-lg z-10 p-1 w-[600px] min-w-[384px]"
-          drag
-          dragMomentum={false}
-          dragElastic={0}
-          initial={{ x: 100, y: 20 }}
-          whileDrag={{ cursor: "grabbing" }}
-          style={{ cursor: "grab", zIndex: zIndices.welcome }}
-          onPointerDown={() => bringToFront("welcome")}
-        >
-          <div className="flex bg-gray-900 justify-between items-center mb-[4px] px-[10px] py-[4px]">
-            <h2 className="text-body-medium font-semibold text-white">
-              Welcome to my portfolio
-            </h2>
-            <div className="bg-white border-2 border-gray-600 text-4xl cursor-pointer hover:bg-gray-300">
-              <GoDash
-                onClick={() => setIsModalOpen(false)}
-                className="size-5 text-gray-900"
-              />
+        <div className="fixed inset-0 flex items-start justify-center pointer-events-none z-20">
+          <motion.div
+            className="bg-gray-100 border border-gray-600 shadow-lg p-1 w-[94vw] lg:w-[600px] min-w-0 lg:min-w-[384px] pointer-events-auto"
+            drag={isMobile ? "y" : true}
+            dragMomentum={false}
+            dragElastic={0}
+            initial={{ x: isMobile ? 0 : 100, y: 20 }}
+            whileDrag={{ cursor: "grabbing" }}
+            style={{ cursor: "grab", zIndex: zIndices.welcome }}
+            onPointerDown={() => bringToFront("welcome")}
+          >
+            <div className="flex bg-gray-900 justify-between items-center mb-[4px] px-[10px] py-[4px]">
+              <h2 className="text-body-medium font-semibold text-white">
+                Welcome to my portfolio
+              </h2>
+              <div className="bg-white border-2 border-gray-600 text-4xl cursor-pointer hover:bg-gray-300">
+                <GoDash
+                  onClick={() => setIsModalOpen(false)}
+                  className="size-5 text-gray-900"
+                />
+              </div>
             </div>
-          </div>
-          <div className="text-gray-900 bg-white px-[5px] pt-[4px] pb-5 border-2 border-gray-600">
-            <p className="mb-2">
-              My name is Friday Martin, currently based in Lagos, Nigeria
-            </p>
-            <p className="mb-4">
-              I help businesses create websites and systems that automate their
-              workflow.
-            </p>
+            <div className="text-gray-900 bg-white px-[5px] pt-[4px] pb-5 border-2 border-gray-600">
+              <p className="mb-2">
+                My name is Friday Martin, currently based in Lagos, Nigeria
+              </p>
+              <p className="mb-4">
+                I help businesses create websites and systems that automate
+                their workflow.
+              </p>
 
-            <p>
-              Click on the{" "}
-              <span className="font-semibold text-gray-900">Projects icon</span>{" "}
-              to see some of my work
-            </p>
-            <p>
-              Click on the{" "}
-              <span className="font-semibold text-gray-900">Contact me</span> to
-              reach out
-            </p>
-            <p>
-              Click on the{" "}
-              <span className="font-semibold text-gray-900">About icon</span> to
-              know more about me
-            </p>
-          </div>
-        </motion.div>
+              <p>
+                Click on the{" "}
+                <span className="font-semibold text-gray-900">
+                  Projects icon
+                </span>{" "}
+                to see some of my work
+              </p>
+              <p>
+                Click on the{" "}
+                <span className="font-semibold text-gray-900">
+                  Contact icon
+                </span>{" "}
+                to reach out
+              </p>
+              <p>
+                Click on the{" "}
+                <span className="font-semibold text-gray-900">About icon</span>{" "}
+                to know more about me
+              </p>
+            </div>
+          </motion.div>
+        </div>
       )}
 
-      <div className="fixed bottom-8 left-0 right-0 flex justify-center gap-16">
-        {/* <div className="flex flex-col items-center gap-2">
-          <div
-            onClick={() => setIsSkillsModal(!isSkillsModal)}
-            className="cursor-pointer"
-          >
-            {skillIcon}
-          </div>
-          <p className="font-semibold">Skills</p>
-        </div> */}
+      <div className="fixed lg:bottom-8 bottom-4 left-0 right-0 flex justify-center lg:gap-16 gap-8">
         <div className="flex flex-col items-center gap-2">
           <div
             onClick={() =>
@@ -115,7 +119,7 @@ export default function HomePage() {
           >
             {workIcon}
           </div>
-          <p className="font-semibold text-gray-900">Projects</p>
+          <p className="font-semibold text-gray-900 menu-text">Projects</p>
         </div>
         <div
           onClick={() =>
@@ -123,28 +127,31 @@ export default function HomePage() {
           }
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
-          {contactIcon} <p className="font-semibold text-gray-900">Contact</p>
+          {contactIcon}{" "}
+          <p className="font-semibold text-gray-900 menu-text">Contact</p>
         </div>
 
         <div
           onClick={() => toggleModal("about", setIsAboutModal, isAboutModal)}
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
-          {aboutIcon} <p className="font-semibold text-gray-900">About</p>
+          {aboutIcon}{" "}
+          <p className="font-semibold text-gray-900 menu-text">About</p>
         </div>
 
         <div
           onClick={() => toggleModal("offers", setIsOffersModal, isOffersModal)}
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
-          {offersIcon} <p className="font-semibold text-gray-900">Offers</p>
+          {offersIcon}{" "}
+          <p className="font-semibold text-gray-900 menu-text">Offers</p>
         </div>
 
         <div
           onClick={() => toggleModal("cv", setIsCvModal, isCvModal)}
           className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-110"
         >
-          {cvIcon} <p className="font-semibold text-gray-900">CV</p>
+          {cvIcon} <p className="font-semibold text-gray-900 menu-text">CV</p>
         </div>
       </div>
 
@@ -153,6 +160,8 @@ export default function HomePage() {
         onClose={() => setIsCvModal(false)}
         zIndex={zIndices.cv}
         onFocus={() => bringToFront("cv")}
+        isMobile={isMobile}
+        initialY={60}
       />
 
       <AboutMeModal
@@ -160,6 +169,8 @@ export default function HomePage() {
         onClose={() => setIsAboutModal(false)}
         zIndex={zIndices.about}
         onFocus={() => bringToFront("about")}
+        isMobile={isMobile}
+        initialY={40}
       />
 
       <ContactModal
@@ -167,6 +178,8 @@ export default function HomePage() {
         onClose={() => setIsContactModal(false)}
         zIndex={zIndices.contact}
         onFocus={() => bringToFront("contact")}
+        isMobile={isMobile}
+        initialY={20}
       />
 
       <ProjectsModal
@@ -174,6 +187,8 @@ export default function HomePage() {
         onClose={() => setIsProjectsModal(false)}
         zIndex={zIndices.projects}
         onFocus={() => bringToFront("projects")}
+        isMobile={isMobile}
+        initialY={0}
       />
 
       <OffersModal
@@ -181,111 +196,19 @@ export default function HomePage() {
         onClose={() => setIsOffersModal(false)}
         zIndex={zIndices.offers}
         onFocus={() => bringToFront("offers")}
+        isMobile={isMobile}
+        initialY={80}
       />
     </div>
   );
 }
-
-// Icons
-
-// const skillIcon = (
-//   <svg
-//     xmlns="http://www.w3.org/2000/svg"
-//     viewBox="0 0 32 32"
-//     id="Money-Payments-Diamond--Streamline-Pixel"
-//     height={38}
-//     width={38}
-//   >
-//     <g>
-//       <path d="M30.47 28.95H32v1.53h-1.53Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m30.47 1.52 -1.52 0 0 1.53 -1.52 0 0 1.52 1.52 0 0 1.53 1.52 0 0 -1.53 1.53 0 0 -1.52 -1.53 0 0 -1.53z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M28.95 22.86h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M27.43 24.38h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M27.43 21.33h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M27.43 15.24h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M27.43 9.14h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M25.9 22.86h1.53v1.52H25.9Z" fill="#000000" strokeWidth={1} />
-//       <path d="M25.9 16.76h1.53v1.53H25.9Z" fill="#000000" strokeWidth={1} />
-//       <path d="M25.9 7.62h1.53v1.52H25.9Z" fill="#000000" strokeWidth={1} />
-//       <path d="M24.38 18.29h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M24.38 6.1h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m24.38 32 0 -1.52 1.52 0 0 -1.53 -1.52 0 0 -1.52 -1.53 0 0 1.52 -1.52 0 0 1.53 1.52 0 0 1.52 1.53 0z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M22.85 19.81h1.53v1.52h-1.53Z" fill="#000000" strokeWidth={1} />
-//       <path d="M21.33 21.33h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M21.33 15.24h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M21.33 9.14h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M21.33 1.52h1.52v1.53h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M19.81 22.86h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M19.81 16.76h1.52v3.05h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M19.81 7.62h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M18.28 19.81h1.53v3.05h-1.53Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m18.28 22.86 -1.52 0 0 4.57 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M16.76 0h1.52v1.52h-1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M13.71 27.43h3.05v1.52h-3.05Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m13.71 22.86 -1.52 0 0 1.52 -1.53 0 0 1.53 1.53 0 0 1.52 1.52 0 0 -4.57z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M10.66 19.81h1.53v3.05h-1.53Z" fill="#000000" strokeWidth={1} />
-//       <path d="M9.14 22.86h1.52v1.52H9.14Z" fill="#000000" strokeWidth={1} />
-//       <path d="M9.14 16.76h1.52v3.05H9.14Z" fill="#000000" strokeWidth={1} />
-//       <path d="M9.14 7.62h1.52v1.52H9.14Z" fill="#000000" strokeWidth={1} />
-//       <path d="M9.14 1.52h1.52v1.53H9.14Z" fill="#000000" strokeWidth={1} />
-//       <path d="M7.62 27.43h1.52v1.52H7.62Z" fill="#000000" strokeWidth={1} />
-//       <path d="M7.62 21.33h1.52v1.53H7.62Z" fill="#000000" strokeWidth={1} />
-//       <path d="M7.62 15.24h1.52v1.52H7.62Z" fill="#000000" strokeWidth={1} />
-//       <path d="M7.62 9.14h1.52v1.53H7.62Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m10.66 6.1 0 1.52 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 -1.53 -18.29 0 0 1.53 4.57 0z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M6.09 19.81h1.53v1.52H6.09Z" fill="#000000" strokeWidth={1} />
-//       <path d="M4.57 18.29h1.52v1.52H4.57Z" fill="#000000" strokeWidth={1} />
-//       <path d="M4.57 6.1h1.52v1.52H4.57Z" fill="#000000" strokeWidth={1} />
-//       <path d="M3.04 24.38h1.53v1.53H3.04Z" fill="#000000" strokeWidth={1} />
-//       <path d="M3.04 16.76h1.53v1.53H3.04Z" fill="#000000" strokeWidth={1} />
-//       <path d="M3.04 7.62h1.53v1.52H3.04Z" fill="#000000" strokeWidth={1} />
-//       <path d="M1.52 30.48h1.52V32H1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M1.52 25.91h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M1.52 22.86h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
-//       <path d="M1.52 15.24h1.52v1.52H1.52Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m1.52 13.71 4.57 0 0 1.53 1.53 0 0 -1.53 15.23 0 0 1.53 1.53 0 0 -1.53 4.57 0 0 1.53 1.52 0 0 -4.57 -1.52 0 0 1.52 -4.57 0 0 -1.52 -1.53 0 0 1.52 -15.23 0 0 -1.52 -1.53 0 0 1.52 -4.57 0 0 -1.52 -1.52 0 0 4.57 1.52 0 0 -1.53z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M1.52 9.14h1.52v1.53H1.52Z" fill="#000000" strokeWidth={1} />
-//       <path
-//         d="m1.52 4.57 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52 -1.52 0 0 1.52 -1.52 0 0 1.53 1.52 0 0 1.52z"
-//         fill="#000000"
-//         strokeWidth={1}
-//       />
-//       <path d="M0 24.38h1.52v1.53H0Z" fill="#000000" strokeWidth={1} />
-//     </g>
-//   </svg>
-// );
 
 const workIcon = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32"
     id="Interface-Essential-Wrench-2--Streamline-Pixel"
-    height={38}
-    width={38}
+    className="w-[32px] h-[32px] lg:w-[38px] lg:h-[38px]"
   >
     <g>
       <path
@@ -387,8 +310,7 @@ const aboutIcon = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32"
     id="Email-Emoji-Smile-Smart--Streamline-Pixel"
-    height={38}
-    width={38}
+    className="w-[32px] h-[32px] lg:w-[38px] lg:h-[38px]"
   >
     <g>
       <path d="M30.48 12.19H32v7.62h-1.52Z" fill="#000000" strokeWidth={1} />
@@ -429,8 +351,7 @@ const contactIcon = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32"
     id="Vintage-Phone--Streamline-Pixel"
-    height={38}
-    width={38}
+    className="w-[32px] h-[32px] lg:w-[38px] lg:h-[38px]"
   >
     <g>
       <path d="M29.715 4.57h1.52v4.57h-1.52Z" fill="#000000" strokeWidth={1} />
@@ -481,8 +402,7 @@ const offersIcon = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32"
     id="Coding-Apps-Websites-Phone-Tablet--Streamline-Pixel"
-    height={38}
-    width={38}
+    className="w-[32px] h-[32px] lg:w-[38px] lg:h-[38px]"
   >
     <g>
       <path d="M29.71 24.38h1.53v1.52h-1.53Z" fill="#000000" strokeWidth={1} />
@@ -532,8 +452,7 @@ const cvIcon = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32"
     id="Content-Files-Note--Streamline-Pixel"
-    height={38}
-    width={38}
+    className="w-[32px] h-[32px] lg:w-[38px] lg:h-[38px]"
   >
     <g>
       <path d="M27.432 4.575h1.52v25.9h-1.52Z" fill="#000000" strokeWidth={1} />

@@ -24,6 +24,10 @@
     @apply font-spaceGrotesk bg-gray-200 text-gray-900 font-medium m-0;
   }
 
+  .menu-text {
+    @apply md:text-[16px] text-[13px];
+  }
+
   p {
     @apply md:text-[16px] text-[14px];
   }
