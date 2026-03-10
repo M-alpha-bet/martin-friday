@@ -25,11 +25,11 @@
   }
 
   .menu-text {
-    @apply md:text-[16px] text-[13px];
+    @apply md:text-[16px] text-[14px];
   }
 
   p {
-    @apply md:text-[16px] text-[14px];
+    @apply md:text-[16px] text-[15px];
   }
 
   .text-body-xsmall {

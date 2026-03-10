@@ -74,7 +74,7 @@ export const AboutMeModal = ({
       text: "I love things that feel intentional, meaningful, and beautifully imperfect. Nature is where I find that perfect balance of chaos and peace.",
     },
     {
-      title: "Chaotic Curiosity",
+      title: "Wabi Sabi",
       image: "/images/beach.jpeg",
       text: "Whether it's hiking through trails or reflecting by the beach, I embrace the Japanese concept of wabi-sabi—the charm of imperfect things.",
     },
@@ -188,9 +188,9 @@ export const AboutMeModal = ({
                       src={section.image}
                       alt={section.title}
                       draggable={false}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
+                      className="w-full h-full object-cover lg:grayscale lg:group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
                     />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <div className="absolute inset-0 bg-black/60 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                       <h3 className="text-white font-pixtech text-lg mb-2">
                         {section.title}
                       </h3>
@@ -215,7 +215,7 @@ export const AboutMeModal = ({
                       </p>
                     </div>
                     {/* Visual Label for non-hover state */}
-                    <div className="absolute top-4 left-4 bg-gray-900/80 text-white text-[10px] px-2 py-1 font-mono group-hover:hidden">
+                    <div className="absolute top-4 left-4 bg-gray-900/80 text-white text-[10px] px-2 py-1 font-mono hidden lg:block lg:group-hover:hidden">
                       {section.title.toUpperCase()}
                     </div>
                   </div>
