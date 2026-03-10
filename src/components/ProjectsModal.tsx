@@ -20,24 +20,27 @@ export const ProjectsModal = ({
   isMobile,
   initialY,
 }: ProjectsModalProps) => {
+  const [contentWidth, setContentWidth] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [constraints, setConstraints] = useState({ left: 0, right: 0 });
   const x = useMotionValue(0);
   const [isPaused, setIsPaused] = useState(false);
   const resumeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const { scrollWidth, offsetWidth } = containerRef.current;
-      setConstraints({ left: -(scrollWidth - offsetWidth), right: 0 });
+    if (scrollRef.current) {
+      // Divide by 2 because we duplicate the content
+      setContentWidth(scrollRef.current.scrollWidth / 2);
     }
   }, [isOpen]);
 
   useAnimationFrame(() => {
-    if (!isPaused && constraints.left !== 0) {
+    if (!isPaused && contentWidth !== 0) {
       const currentX = x.get();
       let newX = currentX - 1.0;
-      if (newX < constraints.left) {
+
+      // Reset to 0 when we've scrolled one full set
+      if (newX <= -contentWidth) {
         newX = 0;
       }
       x.set(newX);
@@ -132,41 +135,56 @@ export const ProjectsModal = ({
           className="flex-1 overflow-x-hidden no-scrollbar bg-white border-2 border-gray-600 cursor-cell"
         >
           <motion.div
+            ref={scrollRef}
             drag="x"
-            dragConstraints={constraints}
+            dragConstraints={{ left: -contentWidth, right: 0 }}
             dragElastic={0.1}
             style={{ x }}
             onDragStart={handleInteractionStart}
             onDragEnd={handleInteractionEnd}
+            onUpdate={(latest) => {
+              // Wrap around during manual drag
+              if (typeof latest.x === "number") {
+                if (latest.x < -contentWidth) {
+                  x.set(latest.x + contentWidth);
+                } else if (latest.x > 0) {
+                  x.set(latest.x - contentWidth);
+                }
+              }
+            }}
             className="flex h-full min-w-max p-1 gap-4"
           >
-            {projects.map((project, index) => (
-              <div
-                key={index}
-                className="w-[350px] flex flex-col border border-gray-200 bg-gray-50 hover:border-gray-900 transition-all shrink-0 select-none"
-              >
-                <div className="h-[250px] overflow-hidden border-b-2 border-gray-200">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    draggable={false}
-                    className="w-full h-full object-cover hover:grayscale-50 transition-all duration-500 pointer-events-none"
-                  />
-                </div>
-                <div className="p-3 flex flex-col">
-                  <p className="text-gray-600 text-sm mb-4">
-                    {project.description}
-                  </p>
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm font-bold text-gray-900 hover:translate-x-1 transition-transform group pointer-events-auto"
+            {[...Array(2)].map((_, setIndex) => (
+              <div key={setIndex} className="flex h-full gap-4">
+                {projects.map((project, index) => (
+                  <div
+                    key={`${setIndex}-${index}`}
+                    className="w-[350px] flex flex-col border border-gray-200 bg-gray-50 hover:border-gray-900 transition-all shrink-0 select-none"
                   >
-                    Visit {project.title}
-                    <MdArrowOutward className="group-hover:rotate-45 transition-transform" />
-                  </a>
-                </div>
+                    <div className="h-[250px] overflow-hidden border-b-2 border-gray-200">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        draggable={false}
+                        className="w-full h-full object-cover hover:grayscale-50 transition-all duration-500 pointer-events-none"
+                      />
+                    </div>
+                    <div className="p-3 flex flex-col">
+                      <p className="text-gray-600 text-sm mb-4">
+                        {project.description}
+                      </p>
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm font-bold text-gray-900 hover:translate-x-1 transition-transform group pointer-events-auto"
+                      >
+                        Visit {project.title}
+                        <MdArrowOutward className="group-hover:rotate-45 transition-transform" />
+                      </a>
+                    </div>
+                  </div>
+                ))}
               </div>
             ))}
           </motion.div>

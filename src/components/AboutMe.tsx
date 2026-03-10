@@ -19,25 +19,30 @@ export const AboutMeModal = ({
   isMobile,
   initialY,
 }: AboutMeModalProps) => {
+  const [contentWidth, setContentWidth] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [constraints, setConstraints] = useState({ left: 0, right: 0 });
   const x = useMotionValue(0);
   const [isPaused, setIsPaused] = useState(false);
   const resumeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const { scrollWidth, offsetWidth } = containerRef.current;
-      setConstraints({ left: -(scrollWidth - offsetWidth), right: 0 });
+    if (scrollRef.current) {
+      // scrollRef is the inner motion.div
+      // Its width is 2 * total content width
+      // We want to loop after 1 set is scrolled
+      setContentWidth(scrollRef.current.scrollWidth / 2);
     }
   }, [isOpen]);
 
   useAnimationFrame(() => {
-    if (!isPaused && constraints.left !== 0) {
+    if (!isPaused && contentWidth !== 0) {
       const currentX = x.get();
       let newX = currentX - 1.0;
-      if (newX < constraints.left) {
-        newX = 1;
+
+      // When we've scrolled one full set, reset to 0
+      if (newX <= -contentWidth) {
+        newX = 0;
       }
       x.set(newX);
     }
@@ -138,78 +143,96 @@ export const AboutMeModal = ({
           className="flex-1 overflow-x-hidden no-scrollbar bg-white border-2 border-gray-600 cursor-cell"
         >
           <motion.div
+            ref={scrollRef}
             drag="x"
-            dragConstraints={constraints}
+            dragConstraints={{ left: -contentWidth, right: 0 }}
             dragElastic={0.1}
             style={{ x }}
             onDragStart={handleInteractionStart}
             onDragEnd={handleInteractionEnd}
+            onUpdate={(latest) => {
+              // Wrap around during manual drag
+              if (typeof latest.x === "number") {
+                if (latest.x < -contentWidth) {
+                  x.set(latest.x + contentWidth);
+                } else if (latest.x > 0) {
+                  x.set(latest.x - contentWidth);
+                }
+              }
+            }}
             className="flex h-full min-w-max"
           >
-            {/* Introduction Card */}
-            <div className="w-[300px] p-4 flex flex-col justify-center border-r-2 border-gray-200 shrink-0 select-none">
-              <h1 className="text-heading-medium font-pixtech mb-4">
-                Hello World
-              </h1>
+            {/* Direct Content Render */}
+            {[...Array(2)].map((_, setIndex) => (
+              <div key={setIndex} className="flex h-full">
+                {/* Introduction Card */}
+                <div className="w-[300px] p-4 flex flex-col justify-center border-r-2 border-gray-200 shrink-0 select-none">
+                  <h1 className="text-heading-medium font-pixtech mb-4">
+                    Hello World
+                  </h1>
 
-              <div className="flex gap-2 text-xs font-mono text-gray-400">
-                <span>.STOIC</span>
-                <span>.ARTIST</span>
-                <span>.WABI-SABI</span>
-              </div>
-            </div>
-
-            {/* Iterated Section Cards */}
-            {sections.map((section, index) => (
-              <div
-                key={index}
-                className="w-[350px] relative group overflow-hidden border-r-2 border-gray-200 shrink-0 select-none"
-              >
-                <img
-                  src={section.image}
-                  alt={section.title}
-                  draggable={false}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
-                />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <h3 className="text-white font-pixtech text-lg mb-2">
-                    {section.title}
-                  </h3>
-                  <p className="text-gray-200 text-sm">
-                    {section.title === "Favorite Podcast" ? (
-                      <>
-                        A huge fan of the{" "}
-                        <a
-                          href="https://open.spotify.com/show/1gqvQ7h7BxNSVoQVTnwihr?si=b200165579744487"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline hover:text-blue-500 transition-colors cursor-pointer pointer-events-auto"
-                        >
-                          'How to Take Over the World'
-                        </a>{" "}
-                        podcast. I enjoy taking leadership lessons from the most
-                        interesting people in history.
-                      </>
-                    ) : (
-                      section.text
-                    )}
-                  </p>
+                  <div className="flex gap-2 text-xs font-mono text-gray-400">
+                    <span>.STOIC</span>
+                    <span>.ARTIST</span>
+                    <span>.WABI-SABI</span>
+                  </div>
                 </div>
-                {/* Visual Label for non-hover state */}
-                <div className="absolute top-4 left-4 bg-gray-900/80 text-white text-[10px] px-2 py-1 font-mono group-hover:hidden">
-                  {section.title.toUpperCase()}
+
+                {/* Iterated Section Cards */}
+                {sections.map((section, index) => (
+                  <div
+                    key={`${setIndex}-${index}`}
+                    className="w-[350px] relative group overflow-hidden border-r-2 border-gray-200 shrink-0 select-none"
+                  >
+                    <img
+                      src={section.image}
+                      alt={section.title}
+                      draggable={false}
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 pointer-events-none"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                      <h3 className="text-white font-pixtech text-lg mb-2">
+                        {section.title}
+                      </h3>
+                      <p className="text-gray-200 text-sm">
+                        {section.title === "Favorite Podcast" ? (
+                          <>
+                            A huge fan of the{" "}
+                            <a
+                              href="https://open.spotify.com/show/1gqvQ7h7BxNSVoQVTnwihr?si=b200165579744487"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline hover:text-blue-500 transition-colors cursor-pointer pointer-events-auto"
+                            >
+                              'How to Take Over the World'
+                            </a>{" "}
+                            podcast. I enjoy taking leadership lessons from the
+                            most interesting people in history.
+                          </>
+                        ) : (
+                          section.text
+                        )}
+                      </p>
+                    </div>
+                    {/* Visual Label for non-hover state */}
+                    <div className="absolute top-4 left-4 bg-gray-900/80 text-white text-[10px] px-2 py-1 font-mono group-hover:hidden">
+                      {section.title.toUpperCase()}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Final Closing Card */}
+                <div className="w-[300px] p-8 flex flex-col justify-center bg-gray-900 text-white shrink-0 select-none">
+                  <h2 className="text-heading font-pixtech mb-4">
+                    Let's Connect.
+                  </h2>
+                  <p className="text-gray-300 text-sm mb-6">
+                    Honestly, that’s how I approach both life and code.
+                    Beautifully imperfect and intentionally meaningful.
+                  </p>
                 </div>
               </div>
             ))}
-
-            {/* Final Closing Card */}
-            <div className="w-[300px] p-8 flex flex-col justify-center bg-gray-900 text-white shrink-0 select-none">
-              <h2 className="text-heading font-pixtech mb-4">Let's Connect.</h2>
-              <p className="text-gray-300 text-sm mb-6">
-                Honestly, that’s how I approach both life and code. Beautifully
-                imperfect and intentionally meaningful.
-              </p>
-            </div>
           </motion.div>
         </div>
 
